@@ -25,7 +25,7 @@ func NewVirtual() http.Handler {
 		w.Write([]byte("hello233\n"))
 	})
 
-	// curl -L "http://127.0.0.1:9999/api/direct/api/download?id=" -o /dev/null
+	// curl -L "http://127.0.0.1:9999/api/direct/api/download?id=1" -o /dev/null
 
 	return mux
 }

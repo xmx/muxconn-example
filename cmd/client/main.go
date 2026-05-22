@@ -2,11 +2,8 @@ package main
 
 import (
 	"context"
-	"io"
 	"log/slog"
-	"net"
 	"net/http"
-	"time"
 
 	"github.com/xmx/muxconn"
 )
@@ -28,26 +25,26 @@ func main() {
 	protocol, module := mux.Library()
 	slog.Info("连接服务端成功", "protocol", protocol, "module", module)
 
-	cli := &http.Client{
-		Transport: &http.Transport{
-			DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
-				return mux.Open(ctx)
-			},
-		},
-	}
+	//cli := &http.Client{
+	//	Transport: &http.Transport{
+	//		DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+	//			return mux.Open(ctx)
+	//		},
+	//	},
+	//}
 
-	go func() {
-		ticker := time.NewTicker(time.Second)
-		defer ticker.Stop()
-
-		for range ticker.C {
-			res, _ := cli.Get("http://hi.internal/api/ping")
-			if res != nil {
-				io.Copy(io.Discard, res.Body)
-				res.Body.Close()
-			}
-		}
-	}()
+	//go func() {
+	//	ticker := time.NewTicker(time.Second)
+	//	defer ticker.Stop()
+	//
+	//	for range ticker.C {
+	//		res, _ := cli.Get("http://hi.internal/api/ping")
+	//		if res != nil {
+	//			io.Copy(io.Discard, res.Body)
+	//			res.Body.Close()
+	//		}
+	//	}
+	//}()
 
 	srv := &http.Server{Handler: virtual}
 	err = srv.Serve(mux)

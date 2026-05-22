@@ -9,7 +9,7 @@ import (
 	"net/http/httputil"
 	"strconv"
 	"sync"
-	"time"
+	"sync/atomic"
 
 	"github.com/gorilla/websocket"
 	"github.com/xmx/muxconn"
@@ -17,10 +17,11 @@ import (
 )
 
 type Manager struct {
-	next  http.Handler // 虚拟连接内部的 http server
-	wsu   *websocket.Upgrader
-	mutex sync.RWMutex
-	pools map[string]muxconn.Muxer
+	next   http.Handler // 虚拟连接内部的 http server
+	wsu    *websocket.Upgrader
+	mutex  sync.RWMutex
+	pools  map[string]muxconn.Muxer
+	serial atomic.Int64
 }
 
 func NewManager(next http.Handler) *Manager {
@@ -61,9 +62,9 @@ func (pl *Manager) Accept(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 这里为了演示方便，服务端通过时间戳生成了客户端 ID，
+	// 这里为了演示方便，服务端通过自增序列生成了客户端 ID，
 	// 实际使用时，请结合业务认证通过后，得到客户端唯一标识。
-	id := strconv.FormatInt(time.Now().UnixNano(), 10)
+	id := strconv.FormatInt(pl.serial.Add(1), 10)
 	protocol, module := mux.Library()
 
 	pl.mutex.Lock()
@@ -146,7 +147,7 @@ func (pl *Manager) Limit(w http.ResponseWriter, r *http.Request) {
 
 	mux.SetLimit(rate.Limit(bcnt))
 
-	slog.Error("客户端流量配置成功", "id", req.ID)
+	slog.Error("客户端流量配置成功", "id", req.ID, "limit", req.Limit)
 }
 
 // Limit 对客户端限流
