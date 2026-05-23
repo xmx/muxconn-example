@@ -67,6 +67,9 @@ func (pl *Manager) Accept(w http.ResponseWriter, r *http.Request) {
 	id := strconv.FormatInt(pl.serial.Add(1), 10)
 	protocol, module := mux.Library()
 
+	// 为了演示限流，每次上线默认限制 444 KB/s
+	mux.SetLimit(444 * 1024)
+
 	pl.mutex.Lock()
 	pl.pools[id] = mux
 	pl.mutex.Unlock()
@@ -100,15 +103,16 @@ func (pl *Manager) Clients(w http.ResponseWriter, r *http.Request) {
 		stms := mux.Streams()
 
 		stat := &ClientStat{
-			ID:         id,
-			Protocol:   proto,
-			Module:     module,
-			Limit:      float64(bps),
-			Unlimit:    bps == rate.Inf,
-			RX:         tx, // 服务端侧统计客户端流量，RX TX 要交换位置
-			TX:         rx, // 服务端侧统计客户端流量，RX TX 要交换位置
-			Cumulative: cumulative,
-			Active:     active,
+			ID:          id,
+			Protocol:    proto,
+			Module:      module,
+			Limit:       float64(bps),
+			Unlimit:     bps == rate.Inf,
+			RX:          tx, // 服务端侧统计客户端流量，RX TX 要交换位置
+			TX:          rx, // 服务端侧统计客户端流量，RX TX 要交换位置
+			Cumulative:  cumulative,
+			Active:      active,
+			ConnectedAt: mux.ConnectedAt(),
 		}
 		for _, stm := range stms {
 			ss := stm.Stats()
@@ -150,7 +154,40 @@ func (pl *Manager) Limit(w http.ResponseWriter, r *http.Request) {
 	slog.Error("客户端流量配置成功", "id", req.ID, "limit", req.Limit)
 }
 
-// Limit 对客户端限流
+// Kill 结束某个客户端的某个子流
+func (pl *Manager) Kill(w http.ResponseWriter, r *http.Request) {
+	ru := r.URL
+	query := ru.Query()
+	id := query.Get("id")      // 客户端 ID
+	sidStr := query.Get("sid") // 内部子流 ID
+	sid, err := strconv.ParseUint(sidStr, 10, 64)
+	if err != nil {
+		slog.Error("子流 ID 错误", "sid", sidStr)
+		return
+	}
+
+	pl.mutex.RLock()
+	mux := pl.pools[id]
+	pl.mutex.RUnlock()
+
+	if mux == nil {
+		slog.Error("客户端不存在", "id", id)
+		return
+	}
+
+	for _, stm := range mux.Streams() {
+		stats := stm.Stats()
+		if stats.ID == sid {
+			_ = stm.Close()
+			slog.Warn("结束子流", "id", id, "sid", sid)
+			return
+		}
+	}
+
+	slog.Error("没有找到子流", "id", id, "sid", sid)
+}
+
+// Direct 直连客户端上的 HTTP Server
 func (pl *Manager) Direct(w http.ResponseWriter, r *http.Request) {
 	ru := r.URL
 	query := ru.Query()
@@ -179,6 +216,7 @@ func (pl *Manager) Direct(w http.ResponseWriter, r *http.Request) {
 			DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
 				return mux.Open(ctx)
 			},
+			DisableKeepAlives: true,
 		},
 	}
 

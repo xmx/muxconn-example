@@ -10,7 +10,9 @@ func main() {
 	mux.HandleFunc("/api/tunnel", mgt.Accept)
 	mux.HandleFunc("/api/clients", mgt.Clients)         // 查看客户端状态
 	mux.HandleFunc("/api/limit", mgt.Limit)             // 对客户端限流
+	mux.HandleFunc("/api/kill", mgt.Kill)               // 结束某个客户端的某个子流
 	mux.HandleFunc("/api/direct/{path...}", mgt.Direct) // 浏览器直连客户端虚拟通道服务
+	mux.Handle("/", http.FileServer(http.Dir("webui")))
 
 	http.ListenAndServe(":9999", mux)
 }

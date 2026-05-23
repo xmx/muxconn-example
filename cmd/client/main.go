@@ -11,7 +11,7 @@ import (
 func main() {
 	parent := context.Background()
 	addrs := []string{
-		"http://localhost:9999/api/tunnel", // 服务端暴露的接入端点
+		"http://localhost:9999/api/tunnel?protocol=smux", // 服务端暴露的接入端点
 	}
 
 	virtual := NewVirtual() // 客户端侧：虚拟通道内的 HTTP 处理器
@@ -38,11 +38,14 @@ func main() {
 	//	defer ticker.Stop()
 	//
 	//	for range ticker.C {
-	//		res, _ := cli.Get("http://hi.internal/api/ping")
-	//		if res != nil {
-	//			io.Copy(io.Discard, res.Body)
-	//			res.Body.Close()
-	//		}
+	//		//res, _ := cli.Get("http://hi.internal/api/ping")
+	//		//if res != nil {
+	//		//	io.Copy(io.Discard, res.Body)
+	//		//	res.Body.Close()
+	//		//}
+	//
+	//		stms := mux.Streams()
+	//		fmt.Printf("NUM: %d\n", len(stms))
 	//	}
 	//}()
 
