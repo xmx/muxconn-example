@@ -1,6 +1,9 @@
 package main
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
 func main() {
 	virtual := NewVirtual() // 服务器侧：虚拟通道内的 HTTP 处理器
@@ -14,5 +17,6 @@ func main() {
 	mux.HandleFunc("/api/direct/{path...}", mgt.Direct) // 浏览器直连客户端虚拟通道服务
 	mux.Handle("/", http.FileServer(http.Dir("webui")))
 
+	fmt.Println("浏览器访问：http://localhost:9999")
 	http.ListenAndServe(":9999", mux)
 }
