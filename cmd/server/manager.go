@@ -67,8 +67,8 @@ func (pl *Manager) Accept(w http.ResponseWriter, r *http.Request) {
 	id := strconv.FormatInt(pl.serial.Add(1), 10)
 	protocol, module := mux.Library()
 
-	// 为了演示限流，每次上线默认限制 444 KB/s
-	mux.SetLimit(444 * 1024)
+	// 为了演示限流，每次上线默认限制 369 KB/s
+	mux.SetLimit(369 * 1024)
 
 	pl.mutex.Lock()
 	pl.pools[id] = mux
@@ -149,9 +149,11 @@ func (pl *Manager) Limit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mux.SetLimit(rate.Limit(bcnt))
-
-	slog.Error("客户端流量配置成功", "id", req.ID, "limit", req.Limit)
+	if mux.SetLimit(rate.Limit(bcnt)) {
+		slog.Warn("限流成功", "id", req.ID, "limit", req.Limit)
+	} else {
+		slog.Warn("限流失败", "id", req.ID, "limit", req.Limit)
+	}
 }
 
 // Kill 结束某个客户端的某个子流

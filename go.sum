@@ -2,12 +2,8 @@ github.com/gorilla/websocket v1.5.3 h1:saDtZ6Pbx/0u+bgYQ3q96pZgCzfhKXGPqt7kZ72aN
 github.com/gorilla/websocket v1.5.3/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/hashicorp/yamux v0.1.2 h1:XtB8kyFOyHXYVFnwT5C3+Bdo8gArse7j2AQ0DA0Uey8=
 github.com/hashicorp/yamux v0.1.2/go.mod h1:C+zze2n6e/7wshOZep2A70/aQU6QBRWJO/G6FT1wIns=
-github.com/xmx/muxconn v0.0.0-20260522143323-e6c3d9d6a008 h1:MHNF4kiAfapxLPZun/lixk/uR06hOwZ2erOo1i2VPNQ=
-github.com/xmx/muxconn v0.0.0-20260522143323-e6c3d9d6a008/go.mod h1:q9n+M2tB091g95iVoSVWcN+IXlBbTav+SNp6Cc+uofs=
-github.com/xmx/muxconn v0.0.0-20260522160809-9b5ffbbe7b34 h1:EpkfaY6efT7Bz7V2ORpeoWa33FDMzArFwwahfp3yTK4=
-github.com/xmx/muxconn v0.0.0-20260522160809-9b5ffbbe7b34/go.mod h1:q9n+M2tB091g95iVoSVWcN+IXlBbTav+SNp6Cc+uofs=
-github.com/xmx/muxconn v0.0.0-20260523063009-4e5054e1ffc7 h1:TNGJCX9CjlQ9ToXpWw6M/Vz4TjMWKhEaKuMT5SIZ3G4=
-github.com/xmx/muxconn v0.0.0-20260523063009-4e5054e1ffc7/go.mod h1:q9n+M2tB091g95iVoSVWcN+IXlBbTav+SNp6Cc+uofs=
+github.com/xmx/muxconn v0.0.0-20260524051114-d684bb07eaef h1:YqGaVHZCfdyrqi90RtpUqs6HdcOXWojBG3SMBcrcjTc=
+github.com/xmx/muxconn v0.0.0-20260524051114-d684bb07eaef/go.mod h1:q9n+M2tB091g95iVoSVWcN+IXlBbTav+SNp6Cc+uofs=
 github.com/xtaci/smux v1.5.57 h1:N72VbGoSYxgcm6mPOYX0QzEZNVD3UI/JlVvAtXF+WrY=
 github.com/xtaci/smux v1.5.57/go.mod h1:IGQ9QYrBphmb/4aTnLEcJby0TNr3NV+OslIOMrX825Q=
 golang.org/x/time v0.15.0 h1:bbrp8t3bGUeFOx08pvsMYRTCVSMk89u4tKbNOZbp88U=
