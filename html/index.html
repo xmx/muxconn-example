@@ -3,158 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MuxConn · 控制台</title>
+    <title>MUXCONN · 控制台</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <div class="brand">
-            <span class="brand-glyph">◈</span>
-            <span class="brand-name">MUXCONN</span>
-            <span class="brand-tag">多路复用控制台</span>
+<header>
+    <div class="brand">
+        <span class="brand-glyph">◈</span>
+        <span class="brand-name">MUXCONN</span>
+        <span class="brand-tag">多路复用控制台演示</span>
+    </div>
+    <div class="header-center">
+        <nav class="tabs">
+            <button class="tab active" data-view="clients">客户端</button>
+            <button class="tab" data-view="about">关于</button>
+        </nav>
+    </div>
+    <div class="header-status">
+        <span class="live-indicator" id="liveDot"></span>
+        <span class="live-label" id="statusText">未连接</span>
+        <span class="stat-divider"></span>
+        <span class="stat" id="clientCount">0</span>
+        <span class="stat-label">个客户端</span>
+        <span class="stat-divider"></span>
+        <span class="stat" id="refreshInfo">自动</span>
+    </div>
+</header>
+
+<main>
+    <section id="view-clients" class="view active">
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <div class="search-box">
+                    <span class="search-icon">⌕</span>
+                    <input type="text" id="searchInput" placeholder="搜索 ID / 协议 / 模块...">
+                </div>
+            </div>
+            <div class="toolbar-right">
+                <button class="btn btn-ghost" id="btnRefresh">
+                    <span class="btn-icon">⟳</span> 刷新
+                </button>
+                <div class="interval-picker">
+                    <select id="refreshInterval">
+                        <option value="1" selected>1s</option>
+                        <option value="3">3s</option>
+                        <option value="5">5s</option>
+                        <option value="10">10s</option>
+                        <option value="0">不刷新</option>
+                    </select>
+                </div>
+            </div>
         </div>
-        <div class="header-center">
-            <nav class="tabs">
-                <button class="tab active" data-view="clients">客户端</button>
-                <button class="tab" data-view="about">关于</button>
-            </nav>
+
+        <div class="dashboard">
+            <div class="traffic-bar">
+                <div class="traffic-item">
+                    <span class="traffic-dir down">▼ RX</span>
+                    <span class="traffic-val" id="totalRX">0 B</span>
+                </div>
+                <div class="traffic-item">
+                    <span class="traffic-dir up">▲ TX</span>
+                    <span class="traffic-val" id="totalTX">0 B</span>
+                </div>
+            </div>
+            <div class="card-grid" id="clientGrid">
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-icon">◈</div>
+                    <div class="empty-title">等待客户端连接...</div>
+                    <div class="empty-sub">客户端连接后将在此处显示</div>
+                </div>
+            </div>
         </div>
-        <div class="header-status">
-            <span class="live-indicator" id="liveDot"></span>
-            <span class="live-label" id="statusText">未连接</span>
-            <span class="stat-divider"></span>
-            <span class="stat" id="clientCount">0</span>
-            <span class="stat-label">个客户端</span>
-            <span class="stat-divider"></span>
-            <span class="stat" id="refreshInfo">自动</span>
+
+        <div class="drawer" id="drawer">
+            <div class="drawer-bar" id="drawerBar">
+                <span class="drawer-handle"></span>
+                <span class="drawer-title" id="drawerTitle">子流列表</span>
+                <span class="drawer-extra" id="drawerExtra"></span>
+            </div>
+            <div class="drawer-body" id="drawerBody">
+                <div class="drawer-empty" id="drawerEmpty">请选择客户端查看子流</div>
+                <table class="stream-table" id="streamTable">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>RX ▾</th>
+                        <th>TX ▴</th>
+                        <th>连接时间</th>
+                        <th>持续时长</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="streamBody"></tbody>
+                </table>
+            </div>
         </div>
-    </header>
+    </section>
 
-    <main>
-        <section id="view-clients" class="view active">
-            <div class="toolbar">
-                <div class="toolbar-left">
-                    <div class="search-box">
-                        <span class="search-icon">⌕</span>
-                        <input type="text" id="searchInput" placeholder="搜索 ID / 协议 / 模块...">
-                    </div>
-                </div>
-                <div class="toolbar-right">
-                    <button class="btn btn-ghost" id="btnRefresh">
-                        <span class="btn-icon">⟳</span> 刷新
-                    </button>
-                    <div class="interval-picker">
-                        <select id="refreshInterval">
-                            <option value="1" selected>1s</option>
-                            <option value="3">3s</option>
-                            <option value="5">5s</option>
-                            <option value="10">10s</option>
-                            <option value="0">不刷新</option>
-                        </select>
-                    </div>
+    <section id="view-about" class="view">
+        <div class="about-panel">
+            <div class="about-header">
+                <span class="about-glyph">◈</span>
+                <h2>MUXCONN · 连接多路复用器</h2>
+            </div>
+            <p>一个 Go 库，可将多个子流多路复用到单个连接上，底层支持 <strong>yamux</strong> 或 <strong>smux</strong>。</p>
+            <div class="about-section">
+                <h3>REST API</h3>
+                <div class="endpoint-list">
+                    <code><span class="method">GET</span> /api/clients</code>
+                    <code><span class="method">GET</span> /api/limit?id={id}&limit={rate}</code>
+                    <code><span class="method">GET</span> /api/kill?id={id}&sid={sid}</code>
+                    <code><span class="method">GET</span> /api/tunnel</code>
+                    <code><span class="method">GET</span> /api/direct/{path}?id={id}</code>
                 </div>
             </div>
+            <div class="about-section">
+                <h3>限流测试</h3>
+                <p>客户端上线后，使用 curl 测试限流效果：</p>
+                <code class="code-block">curl -L "http://127.0.0.1:9999/api/direct/api/download?id={CLIENT_ID}" -o
+                    /dev/null</code>
+                <p>在页面上调整限流值，观察下载速度的变化。</p>
+            </div>
+        </div>
+    </section>
+</main>
 
-            <div class="dashboard">
-                <div class="traffic-bar">
-                    <div class="traffic-item">
-                        <span class="traffic-dir down">▼ RX</span>
-                        <span class="traffic-val" id="totalRX">0 B</span>
-                    </div>
-                    <div class="traffic-item">
-                        <span class="traffic-dir up">▲ TX</span>
-                        <span class="traffic-val" id="totalTX">0 B</span>
-                    </div>
-                </div>
-                <div class="card-grid" id="clientGrid">
-                    <div class="empty-state" id="emptyState">
-                        <div class="empty-icon">◈</div>
-                        <div class="empty-title">等待客户端连接...</div>
-                        <div class="empty-sub">客户端连接后将在此处显示</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="drawer" id="drawer">
-                <div class="drawer-bar" id="drawerBar">
-                    <span class="drawer-handle"></span>
-                    <span class="drawer-title" id="drawerTitle">子流列表</span>
-                    <span class="drawer-extra" id="drawerExtra"></span>
-                </div>
-                <div class="drawer-body" id="drawerBody">
-                    <div class="drawer-empty" id="drawerEmpty">请选择客户端查看子流</div>
-                    <table class="stream-table" id="streamTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>RX ▾</th>
-                                <th>TX ▴</th>
-                                <th>连接时间</th>
-                                <th>持续时长</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="streamBody"></tbody>
-                    </table>
+<div class="modal-overlay" id="limitModal">
+    <div class="modal">
+        <div class="modal-head">
+            <h3>限流设置</h3>
+            <button class="modal-x" id="modalClose">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-target">客户端：<strong id="modalClientId">-</strong></div>
+            <div class="form-row">
+                <label>速率</label>
+                <div class="form-controls">
+                    <input type="number" id="modalLimit" value="10" min="0" placeholder="0">
+                    <select id="modalUnit">
+                        <option value="K">KB/s</option>
+                        <option value="M" selected>MB/s</option>
+                        <option value="G">GB/s</option>
+                        <option value="inf">无限制</option>
+                    </select>
                 </div>
             </div>
-        </section>
-
-        <section id="view-about" class="view">
-            <div class="about-panel">
-                <div class="about-header">
-                    <span class="about-glyph">◈</span>
-                    <h2>MuxConn · 连接多路复用器</h2>
-                </div>
-                <p>一个 Go 库，可将多个子流多路复用到单个连接上，底层支持 <strong>yamux</strong> 或 <strong>smux</strong>。</p>
-                <div class="about-section">
-                    <h3>REST API</h3>
-                    <div class="endpoint-list">
-                        <code><span class="method">GET</span> /api/clients</code>
-                        <code><span class="method">GET</span> /api/limit?id={id}&limit={rate}</code>
-                        <code><span class="method">GET</span> /api/kill?id={id}&sid={sid}</code>
-                        <code><span class="method">GET</span> /api/tunnel</code>
-                        <code><span class="method">GET</span> /api/direct/{path}?id={id}</code>
-                    </div>
-                </div>
-                <div class="about-section">
-                    <h3>限流测试</h3>
-                    <p>客户端上线后，使用 curl 测试限流效果：</p>
-                    <code class="code-block">curl -L "http://127.0.0.1:9999/api/direct/api/download?id={CLIENT_ID}" -o /dev/null</code>
-                    <p>在页面上调整限流值，观察下载速度的变化。</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <div class="modal-overlay" id="limitModal">
-        <div class="modal">
-            <div class="modal-head">
-                <h3>限流设置</h3>
-                <button class="modal-x" id="modalClose">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-target">客户端：<strong id="modalClientId">-</strong></div>
-                <div class="form-row">
-                    <label>速率</label>
-                    <div class="form-controls">
-                        <input type="number" id="modalLimit" value="10" min="0" placeholder="0">
-                        <select id="modalUnit">
-                            <option value="K">KB/s</option>
-                            <option value="M" selected>MB/s</option>
-                            <option value="G">GB/s</option>
-                            <option value="inf">无限制</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-foot">
-                <button class="btn btn-ghost" id="modalCancel">取消</button>
-                <button class="btn btn-primary" id="modalApply">应用</button>
-            </div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn btn-ghost" id="modalCancel">取消</button>
+            <button class="btn btn-primary" id="modalApply">应用</button>
         </div>
     </div>
+</div>
 
-    <script src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

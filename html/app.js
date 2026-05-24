@@ -30,7 +30,7 @@ function fmtTime(iso) {
     if (!iso) return '-'
     const d = new Date(iso)
     const p = n => String(n).padStart(2, '0')
-    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`
 }
 
 function fmtDuration(iso) {
@@ -41,9 +41,9 @@ function fmtDuration(iso) {
     const m = Math.floor(s / 60)
     const h = Math.floor(m / 60)
     const d = Math.floor(h / 24)
-    if (d > 0) return `${d}d ${h%24}h`
-    if (h > 0) return `${h}h ${m%60}m`
-    if (m > 0) return `${m}m ${s%60}s`
+    if (d > 0) return `${d}d ${h % 24}h`
+    if (h > 0) return `${h}h ${m % 60}m`
+    if (m > 0) return `${m}m ${s % 60}s`
     return `${s}s`
 }
 
@@ -370,11 +370,11 @@ document.addEventListener('mouseup', () => {
 let modalId = null
 
 function parseLimit(limit, unlimit) {
-    if (unlimit) return { val: '', unit: 'inf' }
+    if (unlimit) return {val: '', unit: 'inf'}
     const num = Math.round(parseFloat(limit))
-    if (num < 1024) return { val: String(num), unit: 'K' }
-    if (num < 1024 * 1024) return { val: (num / 1024).toFixed(0), unit: 'K' }
-    return { val: (num / (1024 * 1024)).toFixed(1), unit: 'M' }
+    if (num < 1024) return {val: String(num), unit: 'K'}
+    if (num < 1024 * 1024) return {val: (num / 1024).toFixed(0), unit: 'K'}
+    return {val: (num / (1024 * 1024)).toFixed(1), unit: 'M'}
 }
 
 function openLimitModalFor(id) {
