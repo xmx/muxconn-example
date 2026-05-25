@@ -119,10 +119,14 @@
             </div>
             <div class="about-section">
                 <h3>限流测试</h3>
-                <p>客户端上线后，使用 curl 测试限流效果：</p>
+                <p>客户端上线后，使用 curl 测试限流效果。在页面上调整限流值，观察下载速度的变化。</p>
+                <p>Linux / macOS</p>
                 <code class="code-block">curl -L "http://127.0.0.1:9999/api/direct/api/download?id={CLIENT_ID}" -o
                     /dev/null</code>
-                <p>在页面上调整限流值，观察下载速度的变化。</p>
+                <p></p>
+                <p>Windows</p>
+                <code class="code-block">curl.exe -L "http://127.0.0.1:9999/api/direct/api/download?id={CLIENT_ID}" -o
+                    NUL</code>
             </div>
         </div>
     </section>
