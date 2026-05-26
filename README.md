@@ -29,6 +29,10 @@ curl.exe -L "http://127.0.0.1:9999/api/direct/api/download?id={CLIENT_ID}" -o NU
 
 然后在浏览器页面调整限流值，实时观察下载速度变化，验证限流效果。
 
+## 截图
+
+![dashboard](html/muxconn-dashboard.jpg)
+
 ## API
 
 | 接口                                    | 说明                          |
@@ -45,8 +49,7 @@ curl.exe -L "http://127.0.0.1:9999/api/direct/api/download?id={CLIENT_ID}" -o NU
 ├── cmd/
 │   ├── server/       # 服务端
 │   └── client/       # 客户端
-├── html/             # Web 控制台
-├── webui/            # 另一套 UI (备用)
+├── html/             # Web 页面
 ├── go.mod
 └── go.sum
 ```
