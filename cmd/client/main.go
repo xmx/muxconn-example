@@ -15,7 +15,7 @@ func main() {
 	}
 
 	virtual := NewVirtual() // 客户端侧：虚拟通道内的 HTTP 处理器
-	mux, err := muxconn.DialContext(parent, addrs, nil)
+	mux, err := muxconn.DialWebsocket(parent, addrs, nil)
 	if err != nil {
 		slog.Error("连接服务端出错", "err", err)
 		return
